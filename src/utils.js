@@ -5,6 +5,8 @@ function listFiles(path) {
 }
 
 function deleteFile(file) {
+  console.log(`Delete ${file}`);
+  console.log('');
   return fs.unlinkSync(file);
 }
 
@@ -12,4 +14,10 @@ function saveFile(path, data) {
   return fs.writeFileSync(path, data);
 }
 
-module.exports = {listFiles, deleteFile, saveFile};
+function deleteAll(path) {
+  for (file of listFiles(path)) {
+    return deleteFile(file);
+  }
+}
+
+module.exports = {listFiles, deleteFile, saveFile, deleteAll};

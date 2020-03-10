@@ -15,14 +15,19 @@ const sftpOut = new Client();
 
 async function listFiles(path = pathIn, options = fileType, type = 'in') {
   let res;
+  options = `^.*\.${options}$`;
+  console.log(options);
   if (type === 'out') {
-    await sftpIn.connect(configIn);
+    await sftpIn.connect(configIn);  
     res = await sftpIn.list(path, options);
     await sftpIn.end();
   } else {
     await sftpOut.connect(configOut);
     res = await sftpOut.list(path, options);
     await sftpOut.end();
+  }
+  for (item of res) {
+    console.log(item.name);
   }
   return res;
 }

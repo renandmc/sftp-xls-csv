@@ -11,7 +11,7 @@
     "password": "123"
   },
   "path_out": "/home/renan/teste/csv", 
-  "file_type": "*.xls",
+  "file_type": "xls",
   "xls_path": "./xls",
   "csv_path": "./csv",
   "exec": "one"
