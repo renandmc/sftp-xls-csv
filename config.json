@@ -1,0 +1,18 @@
+{
+  "host_in": {
+    "host": "192.168.0.5",
+    "username": "renan",
+    "password": "123"
+  },
+  "path_in": "/home/renan/teste/xls",
+  "host_out": {
+    "host": "192.168.0.5",
+    "username": "renan",
+    "password": "123"
+  },
+  "path_out": "/home/renan/teste/csv", 
+  "file_type": "*.xls",
+  "xls_path": "./xls",
+  "csv_path": "./csv",
+  "exec": "one"
+}
