@@ -1,6 +1,6 @@
 # sftp-xls-csv
----
-Projeto em node que realiza download de arquivos XLS via sftp de um servidor A, converte para CSV e faz o upload via sftp para um servidor B
+
+Projeto em node que realiza download de arquivos XLS via SFTP, converte para CSV e faz o upload via SFTP.
 
 ## Instruções instalação
 
@@ -10,7 +10,7 @@ npm install
 
 ## Configurações
 
-As configurações encontram-se no arquivo **config.json**
+As configurações encontram-se no arquivo **config.json**.
 
 ## Dependências
 
