@@ -11,6 +11,7 @@
   "dependencies": {
     "node-xlsx": "^0.15.0",
     "ssh2-sftp": "^1.0.0",
-    "ssh2-sftp-client": "^5.1.0"
+    "ssh2-sftp-client": "^5.1.0",
+    "winston": "^3.2.1"
   }
 }

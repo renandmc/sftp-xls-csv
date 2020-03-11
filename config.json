@@ -1,18 +1,22 @@
 {
-  "host_in": {
-    "host": "192.168.0.5",
-    "username": "renan",
-    "password": "123"
+  "in": {
+    "host": {
+      "host": "191.234.163.181",
+      "username": "sftpuser",
+      "password": "1234"
+    },
+    "path": "/SFTP/XLS"
   },
-  "path_in": "/home/renan/teste/xls",
-  "host_out": {
-    "host": "192.168.0.5",
-    "username": "renan",
-    "password": "123"
+  "out": {
+    "host": {
+      "host": "191.234.163.181",
+      "username": "sftpuser",
+      "password": "1234"
+    },
+    "path": "/SFTP/CSV"
   },
-  "path_out": "/home/renan/teste/csv", 
-  "file_type": "xls",
-  "xls_path": "./xls",
-  "csv_path": "./csv",
+  "type": "xls",
+  "xlsfolder": "./xls",
+  "csvfolder": "./csv",
   "exec": "one"
 }

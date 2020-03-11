@@ -1,38 +1,64 @@
 const Client = require('ssh2-sftp-client');
 const utils = require('./utils');
+const logger = require('./log');
+
 const config = require('../config.json');
 
-const configIn = config.host_in;
-const pathIn = config.path_in;
-const configOut = config.host_out;
-const pathOut = config.path_out;
-const xlsPath = config.xls_path;
-const csvPath = config.csv_path;
-const fileType = config.file_type;
+const xlsPath = config.xlsfolder;
+const csvPath = config.csvfolder;
+const fileType = config.type;
+ 
+const sftp = new Client();
 
-const sftpIn = new Client();
-const sftpOut = new Client(); 
-
-async function listFiles(path = pathIn, options = fileType, type = 'in') {
-  let res;
-  options = `^.*\.${options}$`;
-  console.log(options);
-  if (type === 'out') {
-    await sftpIn.connect(configIn);  
-    res = await sftpIn.list(path, options);
-    await sftpIn.end();
+function getConfig(inOut = 'in') {
+  if (inOut === 'in') {
+    return config.in;
   } else {
-    await sftpOut.connect(configOut);
-    res = await sftpOut.list(path, options);
-    await sftpOut.end();
+    return config.out;
   }
-  for (item of res) {
-    console.log(item.name);
+}
+
+async function openConnection(inOut = 'in') {
+  try{
+    logger.info(`Connecting to [${getConfig(inOut).host.host}]`);
+    await sftp.connect(getConfig(inOut).host);
+    logger.info(`Connected to ${getConfig(inOut).host.host}`);
+  } catch (err) {
+    logger.error(`${err.message}`);
   }
+}
+
+async function closeConnection(inOut = 'in') {
+  try {
+    logger.info(`Closing connection [${getConfig(inOut).host.host}]`);
+    await sftp.end();
+    logger.info(`Closed connection [${getConfig(inOut).host.host}]`);
+  } catch (err) {
+    logger.error(`${err.message}`);
+  }
+}
+
+async function listFiles(inOut = 'in') {
+  let res = [], options, connection;
+  options = `^.*\.(${fileType.toLowerCase()}|${fileType.toUpperCase()})`;
+  await openConnection(inOut);
+  try {
+    logger.info(`Listing files in [${getConfig(inOut).host.host}${getConfig(inOut).path}]`);
+    res = await sftp.list(getConfig(inOut).path, options);
+    logger.info(`[${res.length}] files loaded from [${getConfig(inOut).host.host}${getConfig(inOut).path}]`);
+    for (item of res) {
+      logger.info(`${item.name}`);
+    }
+  } catch (err) {
+    logger.error(`${err.message}`);
+  }
+  await closeConnection();
   return res;
 }
 
-async function downloadFile(file) {
+async function downloadFile(file, inOut = 'in') {
+  await openConnection(inOut);
+
   await sftpIn.connect(configIn);
   if (file.type === '-') {
     let remoteFile = pathIn + '/' + file.name;
