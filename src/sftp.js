@@ -39,7 +39,7 @@ async function closeConnection(inOut = 'in') {
 }
 
 async function listFiles(inOut = 'in') {
-  let res = [], options, connection;
+  let res, options;
   options = `^.*\.(${fileType.toLowerCase()}|${fileType.toUpperCase()})`;
   await openConnection(inOut);
   try {
@@ -51,48 +51,57 @@ async function listFiles(inOut = 'in') {
     }
   } catch (err) {
     logger.error(`${err.message}`);
+    res = [];
   }
   await closeConnection();
   return res;
 }
 
 async function downloadFile(file, inOut = 'in') {
-  await openConnection(inOut);
-
-  await sftpIn.connect(configIn);
   if (file.type === '-') {
-    let remoteFile = pathIn + '/' + file.name;
+    await openConnection(inOut);
+    let remoteFile = getConfig(inOut).path + '/' + file.name;
     let localFile = xlsPath + '/' + file.name;
-    console.log(`--> Remote: ${remoteFile}`);
-    console.log(`----> Local: ${localFile}`);
-    console.log('');
-    await sftpIn.fastGet(remoteFile, localFile);
+    logger.info(`Remote: [${remoteFile}] -> Local: [${localFile}]`);
+    try {
+      logger.info(`Downloading [${getConfig(inOut).host.host}${remoteFile}]`);
+      await sftp.fastGet(remoteFile, localFile);
+      logger.info(`Downloaded [${getConfig(inOut).host.host}${remoteFile}]`);
+    } catch (err) {
+      logger.error(`${err.message}`);
+    }
+    await closeConnection(inOut); 
+  } else {
+    logger.error(`Param 'file' wrong, must be a file`);
   }
-  await sftpIn.end();
 }
 
-async function uploadFile(file) {
-  await sftpOut.connect(configOut);
+async function uploadFile(file, inOut = 'out') {
+  await openConnection(inOut);
   let localFile = csvPath + '/' + file;
-  let remoteFile = pathOut + '/' + file;
-  console.log(`--> Local: ${localFile}`);
-  console.log(`----> Remote: ${remoteFile}`);
-  console.log('');
-  await sftpOut.fastPut(localFile, remoteFile);
-  await sftpOut.end();
+  let remoteFile = getConfig(inOut).path + '/' + file;
+  logger.info(`Local: [${localFile}] -> Remote: [${remoteFile}]`);
+  try {
+    logger.info(`Uploading [${getConfig(inOut).host.host}${remoteFile}]`);
+    await sftp.fastPut(localFile, remoteFile);
+    logger.info(`Uploaded [${getConfig(inOut).host.host}${remoteFile}]`);
+  } catch (err) {
+    logger.error(`${err.message}`);
+  }
+  await closeConnection(inOut);
 }
 
-async function downloadAll() {
-  let files = await listFiles(pathIn, fileType, 'in');
+async function downloadAll(inOut = 'in') {
+  let files = await listFiles(inOut);
   for (let file of files) {
-    await downloadFile(file);
+    await downloadFile(file, inOut);
   }
 }
 
-async function uploadAll() {
+async function uploadAll(inOut = 'out') {
   let files = utils.listFiles(csvPath);
   for (let file of files) {
-    await uploadFile(file);
+    await uploadFile(file, inOut);
   }
 }
 

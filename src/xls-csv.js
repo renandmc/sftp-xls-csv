@@ -1,9 +1,11 @@
 const xlsx = require('node-xlsx');
-const config = require('../config.json');
 const utils = require('./utils');
+const logger = require('./log');
 
-const xlsPath = config.xls_path;
-const csvPath = config.csv_path;
+const config = require('../config.json');
+
+const xlsPath = config.xlsfolder;
+const csvPath = config.csvfolder;
 
 async function convertFile(file) {
   let xlsFile = xlsPath + '/' + file;
@@ -20,9 +22,7 @@ async function convertFile(file) {
   }
   let filename = file.replace(".xlsx", "").replace(".xls", "");
   let csvFile = csvPath + "/" + filename + ".csv";
-  console.log(`--> [${xlsFile}]`);
-  console.log(`----> [${csvFile}]`);
-  console.log(''); 
+  logger.info(`XLS: [${xlsFile}] -> CSV: [${csvFile}]`);
   try{
     utils.saveFile(csvFile, writeStr);
   } catch (err) {
