@@ -10,9 +10,15 @@ npm install
 
 ## Instruções execução
 
+Modo console, definir modo execução no arquivo **config.json**:
 ```js
 node index.js
 ```
+Modo browser: 
+```js
+node server.js
+```
+acessar (http://localhost:3000)
 
 ## Configurações
 
