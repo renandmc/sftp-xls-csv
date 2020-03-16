@@ -22,7 +22,7 @@ async function convertFile(file) {
   }
   let filename = file.replace(".xlsx", "").replace(".xls", "");
   let csvFile = csvPath + "/" + filename + ".csv";
-  logger.info(`XLS: [${xlsFile}] -> CSV: [${csvFile}]`);
+  logger.info(`XLS [${xlsFile}] --> CSV [${csvFile}]`);
   try{
     utils.saveFile(csvFile, writeStr);
   } catch (err) {

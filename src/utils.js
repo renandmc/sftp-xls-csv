@@ -3,7 +3,7 @@ const logger = require('./log');
 
 function listFiles(path) {
   let files;
-  logger.info(`List files: [${path}]`);
+  logger.info(`List files [${path}]`);
   try {
     files = fs.readdirSync(path);
   } catch (err) {
@@ -14,7 +14,7 @@ function listFiles(path) {
 
 function deleteFile(file) {
   let res;
-  logger.info(`Delete file: [${file}]`);
+  logger.info(`Delete file [${file}]`);
   try {
     res = fs.unlinkSync(file); 
   } catch (err) {
@@ -25,7 +25,7 @@ function deleteFile(file) {
 
 function saveFile(path, data) {
   let res;
-  logger.info(`Save file: [${path}]`);
+  logger.info(`Save file [${path}]`);
   try {
     res = fs.writeFileSync(path, data); 
   } catch (err) {
