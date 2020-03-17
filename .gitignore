@@ -1,4 +1,6 @@
 node_modules/
+csv/
+xls/
 *.csv
 *.xls
 *.xlsx

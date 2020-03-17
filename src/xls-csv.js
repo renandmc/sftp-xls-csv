@@ -21,7 +21,17 @@ async function convertFile(file) {
     writeStr += rows[i].join(",") + "\n";
   }
   let filename = file.replace(".xlsx", "").replace(".xls", "");
-  let csvFile = csvPath + "/" + filename + ".csv";
+  let date = () => {
+    let date = new Date();
+    let year = date.getFullYear();
+    let month = `${date.getMonth() + 1}`.padStart(2, '0');
+    let day = `${date.getDate()}`.padStart(2, '0');
+    let hour = `${date.getHours()}`.padStart(2, '0');
+    let min = `${date.getMinutes()}`.padStart(2, '0');
+    let sec = `${date.getSeconds()}`.padStart(2, '0');
+    return `${year}-${month}-${day}-${hour}-${min}-${sec}`;
+  }
+  let csvFile = `${csvPath}/${filename}-${date()}.csv`;
   logger.info(`XLS [${xlsFile}] --> CSV [${csvFile}]`);
   try{
     utils.saveFile(csvFile, writeStr);
@@ -30,7 +40,6 @@ async function convertFile(file) {
       console.warn(`[ERRO]: ${csvFile} está em uso, não foi possível salvar arquivo!!`);
     }
     console.warn(err.message);
-    console.log('');
   }
   return csvFile;
 }

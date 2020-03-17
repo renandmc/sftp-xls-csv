@@ -31,3 +31,5 @@ As configurações encontram-se no arquivo **config.json**.
 [xlsx](https://github.com/mgcrea/node-xlsx)
 
 [winston](https://github.com/winstonjs/winston)
+
+[express](https://github.com/expressjs/express)

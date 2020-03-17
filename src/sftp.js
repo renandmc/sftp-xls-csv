@@ -8,7 +8,6 @@ const config = require('../config.json');
 const xlsPath = config.xlsfolder;
 const csvPath = config.csvfolder;
 const fileType = config.type;
- 
 const sftp = new Client();
 
 function getConfig(inOut = 'in') {
@@ -43,7 +42,8 @@ async function closeConnection(inOut = 'in') {
 
 async function listFiles(inOut = 'in') {
   let res = [], options;
-  options = `^.*\.(${fileType.toLowerCase()}|${fileType.toUpperCase()})`;
+  options = `^.*\.(${fileType.toLowerCase()}|${fileType.toUpperCase()})$`;
+  console.log(options);
   if (await openConnection(inOut)) {
     try {
       logger.info(`List files SFTP [${getConfig(inOut).host.host}${getConfig(inOut).path}]`);
@@ -51,7 +51,7 @@ async function listFiles(inOut = 'in') {
       if (res.length === 0) {
         logger.error(`Files not found [${getConfig(inOut).host.host}${getConfig(inOut).path}]`);
       } else {
-        logger.info(`[${res.length}] files loaded [${getConfig(inOut).host.host}${getConfig(inOut).path}]`);
+        logger.info(`[${res.length}] file(s) loaded [${getConfig(inOut).host.host}${getConfig(inOut).path}]`);
         for (item of res) {
           logger.info(`${item.name}`);
         }
@@ -104,22 +104,30 @@ async function downloadAll(inOut = 'in') {
     for (let file of files) {
       await downloadFile(file, inOut);
     }
+    return true;
   } else {
-    logger.error('Files not found')
+    logger.error('Files not found');
+    return false;
   }
 }
 
 async function uploadAll(inOut = 'out') {
   let files = utils.listFiles(csvPath);
-  for (let file of files) {
-    await uploadFile(file, inOut);
+  if (files.length > 0) {
+    for (let file of files) {
+      await uploadFile(file, inOut);
+    }
+    return true;
+  } else {
+    logger.error('Files not found');
+    return false;
   }
 }
 
 async function downloadFolder(inOut = 'in') {
   if (await openConnection(inOut)) {
     try {
-      logger.info(`[${getConfig(inOut).path}] -> [${xlsPath}]`);
+      logger.info(`[${getConfig(inOut).path}] --> [${xlsPath}]`);
       logger.info(`Download folder SFTP [${getConfig(inOut).host.host}${getConfig(inOut).path}]`);
       await sftp.downloadDir(getConfig(inOut).path, xlsPath);
       await closeConnection(inOut);
@@ -132,7 +140,7 @@ async function downloadFolder(inOut = 'in') {
 async function uploadFolder(inOut = 'out') {
   if (await openConnection(inOut)) {
     try {
-      logger.info(`[${csvPath}] -> [${getConfig(inOut).path}]`);
+      logger.info(`[${csvPath}] --> [${getConfig(inOut).path}]`);
       logger.info(`Upload folder SFTP [${getConfig(inOut).host.host}${getConfig(inOut).path}]`);
       await sftp.uploadDir(csvPath, getConfig(inOut).path);
       await closeConnection(inOut);
