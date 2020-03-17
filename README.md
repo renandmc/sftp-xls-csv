@@ -26,10 +26,8 @@ As configurações encontram-se no arquivo **config.json**.
 
 ## Dependências
 
+[express](https://github.com/expressjs/express)
+
 [ssh2-sftp-client](https://github.com/theophilusx/ssh2-sftp-client)
 
 [xlsx](https://github.com/mgcrea/node-xlsx)
-
-[winston](https://github.com/winstonjs/winston)
-
-[express](https://github.com/expressjs/express)

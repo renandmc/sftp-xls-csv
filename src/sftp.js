@@ -1,7 +1,6 @@
 const fs = require('fs');
 const Client = require('ssh2-sftp-client');
 const utils = require('./utils');
-const logger = require('./log');
 
 const config = require('../config.json');
 
@@ -20,22 +19,22 @@ function getConfig(inOut = 'in') {
 
 async function openConnection(inOut = 'in') {
   try{
-    logger.info(`Connect SFTP [${getConfig(inOut).host.host}]`);
+    console.log(`Connect SFTP [${getConfig(inOut).host.host}]`);
     await sftp.connect(getConfig(inOut).host);
     return true;
   } catch (err) {
-    logger.error(`${err.message}`);
+    console.error(`${err.message}`);
     return false;
   }
 }
 
 async function closeConnection(inOut = 'in') {
   try {
-    logger.info(`Close SFTP [${getConfig(inOut).host.host}]`);
+    console.log(`Close SFTP [${getConfig(inOut).host.host}]`);
     await sftp.end();
     return true;
   } catch (err) {
-    logger.error(`${err.message}`);
+    console.error(`${err.message}`);
     return false;
   }
 }
@@ -43,21 +42,20 @@ async function closeConnection(inOut = 'in') {
 async function listFiles(inOut = 'in') {
   let res = [], options;
   options = `^.*\.(${fileType.toLowerCase()}|${fileType.toUpperCase()})$`;
-  console.log(options);
   if (await openConnection(inOut)) {
     try {
-      logger.info(`List files SFTP [${getConfig(inOut).host.host}${getConfig(inOut).path}]`);
+      console.log(`List files SFTP [${getConfig(inOut).host.host}${getConfig(inOut).path}]`);
       res = await sftp.list(getConfig(inOut).path, options);
       if (res.length === 0) {
-        logger.error(`Files not found [${getConfig(inOut).host.host}${getConfig(inOut).path}]`);
+        console.error(`Files not found [${getConfig(inOut).host.host}${getConfig(inOut).path}]`);
       } else {
-        logger.info(`[${res.length}] file(s) loaded [${getConfig(inOut).host.host}${getConfig(inOut).path}]`);
+        console.log(`[${res.length}] file(s) loaded.`);
         for (item of res) {
-          logger.info(`${item.name}`);
+          console.log(`- ${item.name}`);
         }
       }
     } catch (err) {
-      logger.error(`${err.message}`);
+      console.error(`${err.message}`);
     }
     await closeConnection();
   }
@@ -69,16 +67,16 @@ async function downloadFile(file, inOut = 'in') {
     if (await openConnection(inOut)){
       let remoteFile = getConfig(inOut).path + '/' + file.name;
       let localFile = xlsPath + '/' + file.name;
-      logger.info(`Remote [${remoteFile}] --> Local [${localFile}]`);
+      console.log(`Remote [${remoteFile}] --> Local [${localFile}]`);
       try {
-        logger.info(`Download SFTP [${getConfig(inOut).host.host}${remoteFile}]`);
+        console.log(`Download SFTP [${getConfig(inOut).host.host}${remoteFile}]`);
         await sftp.fastGet(remoteFile, localFile);
       } catch (err) {
-        logger.error(`${err.message}`);
+        console.error(`${err.message}`);
       }
       await closeConnection(inOut); 
     } else {
-      logger.error(`Param 'file' wrong, must be a file`);
+      console.error(`Param 'file' wrong, must be a file`);
     }
   }  
 }
@@ -87,12 +85,12 @@ async function uploadFile(file, inOut = 'out') {
   if (await openConnection(inOut)) {
     let localFile = csvPath + '/' + file;
     let remoteFile = getConfig(inOut).path + '/' + file;
-    logger.info(`Local [${localFile}] --> Remote [${remoteFile}]`);
+    console.log(`Local [${localFile}] --> Remote [${remoteFile}]`);
     try {
-      logger.info(`Upload SFTP [${getConfig(inOut).host.host}${remoteFile}]`);
+      console.log(`Upload SFTP [${getConfig(inOut).host.host}${remoteFile}]`);
       await sftp.fastPut(localFile, remoteFile);
     } catch (err) {
-      logger.error(`${err.message}`);
+      console.error(`${err.message}`);
     }
     await closeConnection(inOut);
   }
@@ -106,7 +104,7 @@ async function downloadAll(inOut = 'in') {
     }
     return true;
   } else {
-    logger.error('Files not found');
+    console.error('Files not found. Nothing to download.');
     return false;
   }
 }
@@ -119,7 +117,7 @@ async function uploadAll(inOut = 'out') {
     }
     return true;
   } else {
-    logger.error('Files not found');
+    console.error('Files not found. Nothing to upload.');
     return false;
   }
 }
@@ -127,12 +125,12 @@ async function uploadAll(inOut = 'out') {
 async function downloadFolder(inOut = 'in') {
   if (await openConnection(inOut)) {
     try {
-      logger.info(`[${getConfig(inOut).path}] --> [${xlsPath}]`);
-      logger.info(`Download folder SFTP [${getConfig(inOut).host.host}${getConfig(inOut).path}]`);
+      console.log(`[${getConfig(inOut).path}] --> [${xlsPath}]`);
+      console.log(`Download folder SFTP [${getConfig(inOut).host.host}${getConfig(inOut).path}]`);
       await sftp.downloadDir(getConfig(inOut).path, xlsPath);
       await closeConnection(inOut);
     } catch(err) {
-      logger.error(`${err.message}`);
+      console.error(`${err.message}`);
     }
   }
 }
@@ -140,12 +138,12 @@ async function downloadFolder(inOut = 'in') {
 async function uploadFolder(inOut = 'out') {
   if (await openConnection(inOut)) {
     try {
-      logger.info(`[${csvPath}] --> [${getConfig(inOut).path}]`);
-      logger.info(`Upload folder SFTP [${getConfig(inOut).host.host}${getConfig(inOut).path}]`);
+      console.log(`[${csvPath}] --> [${getConfig(inOut).path}]`);
+      console.log(`Upload folder SFTP [${getConfig(inOut).host.host}${getConfig(inOut).path}]`);
       await sftp.uploadDir(csvPath, getConfig(inOut).path);
       await closeConnection(inOut);
     } catch (err) {
-      logger.error(`${err.message}`);
+      console.error(`${err.message}`);
     }
   }
 }

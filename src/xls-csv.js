@@ -1,6 +1,5 @@
 const xlsx = require('node-xlsx');
 const utils = require('./utils');
-const logger = require('./log');
 
 const config = require('../config.json');
 
@@ -32,14 +31,11 @@ async function convertFile(file) {
     return `${year}-${month}-${day}-${hour}-${min}-${sec}`;
   }
   let csvFile = `${csvPath}/${filename}-${date()}.csv`;
-  logger.info(`XLS [${xlsFile}] --> CSV [${csvFile}]`);
+  console.log(`XLS [${xlsFile}] --> CSV [${csvFile}]`);
   try{
     utils.saveFile(csvFile, writeStr);
   } catch (err) {
-    if(err.code === 'EBUSY'){
-      console.warn(`[ERRO]: ${csvFile} está em uso, não foi possível salvar arquivo!!`);
-    }
-    console.warn(err.message);
+    console.error(`${err.message}`);
   }
   return csvFile;
 }

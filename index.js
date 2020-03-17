@@ -1,74 +1,73 @@
 const sftp = require('./src/sftp');
 const xlsCsv = require('./src/xls-csv');
 const utils = require('./src/utils');
-const logger = require('./src/log');
 
 const config = require('./config.json');
 
 async function execAll() {
-  logger.info('Start -> [all]');
+  console.log('Start -> [all]');
   console.time('all');
   let files = await sftp.listFiles();
   if (files.length > 0){
-    logger.info('DOWNLOAD');
+    console.log('DOWNLOAD');
     await sftp.downloadAll();
-    logger.info('CONVERT');
+    console.log('CONVERT');
     xlsCsv.convertAll();
-    logger.info('UPLOAD');
+    console.log('UPLOAD');
     await sftp.uploadAll();
-    logger.info('DELETE');
+    console.log('DELETE');
     utils.deleteAll(`${config.xlsfolder}`);
     utils.deleteAll(`${config.csvfolder}`);
   } else {
-    logger.error('Files not found');
+    console.error('Files not found.');
   }
   console.timeEnd('all');
-  logger.info('End -> [all]');
+  console.log('End -> [all]');
 }
 
 async function execOne() {
-  logger.info('Start -> [one]');
+  console.log('Start -> [one]');
   console.time('one');
   let files = await sftp.listFiles();
   if (files.length > 0) {
     for (let file of files) {
-      logger.info('DOWNLOAD');
+      console.log('DOWNLOAD');
       await sftp.downloadFile(file);
-      logger.info('CONVERT');
+      console.log('CONVERT');
       let csv = xlsCsv.convertFile(file.name);
       csv = (await csv).replace(config.csvfolder + '/', '');
-      logger.info('UPLOAD');
+      console.log('UPLOAD');
       await sftp.uploadFile(csv);
-      logger.info('DELETE');
+      console.log('DELETE');
       utils.deleteFile(`${config.xlsfolder}/${file.name}`);
       utils.deleteFile(`${config.csvfolder}/${csv}`);
     }
   } else {
-    logger.error('Files not found');
+    console.error('Files not found.');
   }
   console.timeEnd('one');
-  logger.info('End -> [one]');
+  console.log('End -> [one]');
 }
 
 async function execFolder() {
-  logger.info('Start -> [folder]');
+  console.log('Start -> [folder]');
   console.time('folder');
   let files = await sftp.listFiles();
   if (files.length > 0){
-    logger.info('DOWNLOAD');
+    console.log('DOWNLOAD');
     await sftp.downloadFolder();
-    logger.info('CONVERT');
+    console.log('CONVERT');
     xlsCsv.convertAll();
-    logger.info('UPLOAD');
+    console.log('UPLOAD');
     await sftp.uploadFolder();
-    logger.info('DELETE');
+    console.log('DELETE');
     utils.deleteAll(`${config.xlsfolder}`);
     utils.deleteAll(`${config.csvfolder}`);
   } else {
-    logger.error('Files not found');
+    console.error('Files not found');
   }
   console.timeEnd('folder');
-  logger.info('End -> [folder]');
+  console.log('End -> [folder]');
 } 
 
 function execute(options = 'all') {
