@@ -1,19 +1,19 @@
 {
   "in": {
     "host": {
-      "host": "sftp8.sapsf.com",
-      "username": "portoseg-stage",
-      "password": "SFVe28Tynmx"
+      "host": "host",
+      "username": "username",
+      "password": "password"
     },
-    "path": "/FEED/DOWNLOAD/REPORT/DOWNLOAD"
+    "path": "path"
   },
   "out": {
     "host": {
-      "host": "191.232.180.44",
-      "username": "sftpuser",
-      "password": "1234"
+      "host": "host",
+      "username": "user",
+      "password": "password"
     },
-    "path": "/SFTP/CSV"
+    "path": "path"
   },
   "type": "",
   "xlsfolder": "./xls",
